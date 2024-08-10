@@ -3,6 +3,6 @@ import software.amazon.awscdk.StackProps
 
 fun main() {
     val app = App()
-    Stack(app, "cdk-sample", StackProps.builder().build())
+    Stack(app, "jangolano", StackProps.builder().build())
     app.synth()
 }
