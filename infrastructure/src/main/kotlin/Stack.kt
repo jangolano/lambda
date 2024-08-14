@@ -24,15 +24,15 @@ class Stack(scope: Construct, id: String, props: StackProps) : Stack(scope, id, 
         httpApi.addRoutes(
             AddRoutesOptions.builder()
             .path("/hello")
-            .methods(listOf(HttpMethod.ANY))
+            .methods(listOf(HttpMethod.GET))
             .integration(myFunctionIntegration)
-            .build());
+            .build())
 
         HttpStage.Builder.create(this, "josh-stage")
             .httpApi(httpApi)
             .autoDeploy(true)
             .stageName("josh")
-            .build();
+            .build()
 
     }
 }
