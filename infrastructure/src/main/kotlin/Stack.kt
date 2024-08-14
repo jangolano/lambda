@@ -23,7 +23,7 @@ class Stack(scope: Construct, id: String, props: StackProps) : Stack(scope, id, 
 
         httpApi.addRoutes(
             AddRoutesOptions.builder()
-            .path("/josh")
+            .path("/hello")
             .methods(listOf(HttpMethod.ANY))
             .integration(myFunctionIntegration)
             .build());
