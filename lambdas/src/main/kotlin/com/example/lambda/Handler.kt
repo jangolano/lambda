@@ -7,7 +7,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 
 
 class  Handler : RequestHandler<APIGatewayProxyRequestEvent , APIGatewayProxyResponseEvent> {
-    override fun handleRequest(p0: APIGatewayProxyRequestEvent, p1: Context):APIGatewayProxyResponseEvent {
+    override fun handleRequest(p0: APIGatewayProxyRequestEvent, p1: Context?):APIGatewayProxyResponseEvent {
        p0.headers.forEach { (t, u) ->
            println("$t -> $u")
        }
