@@ -15,33 +15,45 @@ class Stack(scope: Construct, id: String, props: StackProps) : Stack(scope, id, 
 
     init {
 
-        //Define Lambda Function
+        //Define Lambda Functions
         val lambda = Function.Builder.create(this, "first-lambda").functionName("first-lambda").code(Code.fromAsset("../lambdas/build/libs/lambdas-all.jar"))
             .handler("com.example.lambda.Handler").runtime(Runtime.JAVA_21).tracing(Tracing.ACTIVE)
             .build()
         val myFunctionIntegration = HttpLambdaIntegration("first-lambda-integration", lambda)
 
+        val lambda2 = Function.Builder.create(this, "second-lambda").functionName("second-lambda").code(Code.fromAsset("../lambdas/build/libs/lambdas-all.jar"))
+            .handler("com.example.lambda.Handler").runtime(Runtime.JAVA_21).tracing(Tracing.ACTIVE).snapStart(SnapStartConf.ON_PUBLISHED_VERSIONS)
+            .build()
 
-        //Define an API Gateway
+        //Define a lambda version
+        val lambda2Version = Version.Builder.create(this, "second-lambda-version").lambda(lambda2).build()
+        val functionAlias = Alias.Builder.create(this, "second-lambda-alias").version(lambda2Version).aliasName("snapsnart").build()
+        val myFunctionIntegration2 = HttpLambdaIntegration("second-lambda-integration", functionAlias)
+
+        //Define API
         val httpApi = HttpApi(this, "my-simple-api")
 
-        //Add a route
+        //Add Routes
         httpApi.addRoutes(
             AddRoutesOptions.builder()
             .path("/hello")
             .methods(listOf(HttpMethod.GET))
             .integration(myFunctionIntegration)
             .build())
-
-        //Create a stage
+        httpApi.addRoutes(
+                   AddRoutesOptions.builder()
+                       .path("/hello2")
+                       .methods(listOf(HttpMethod.GET))
+                       .integration(myFunctionIntegration2)
+                       .build())
+        //Add Stage
         val apiStage = HttpStage.Builder.create(this, "my-simple-api-stage")
             .httpApi(httpApi)
             .autoDeploy(true)
             .stageName("api")
             .build()
-
-        //Generate the output
+        //Show outputs
         CfnOutput.Builder.create(this, "first-endpoint").value("${apiStage.url}/hello").build()
-
+        CfnOutput.Builder.create(this, "second-endpoint").value("${apiStage.url}/hello2").build()
     }
 }
