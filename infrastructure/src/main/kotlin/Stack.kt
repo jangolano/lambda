@@ -7,6 +7,7 @@ import software.amazon.awscdk.services.apigatewayv2.HttpApi
 import software.amazon.awscdk.services.apigatewayv2.HttpMethod
 import software.amazon.awscdk.services.apigatewayv2.HttpStage
 import software.amazon.awscdk.services.lambda.*
+import software.amazon.awscdk.services.lambda.CfnFunction.SnapStartProperty
 import software.amazon.awscdk.services.lambda.Function
 import software.constructs.Construct
 import kotlin.String
@@ -17,19 +18,19 @@ class Stack(scope: Construct, id: String, props: StackProps) : Stack(scope, id, 
 
         //Define Lambda Functions
         val lambda = Function.Builder.create(this, "first-lambda").functionName("first-lambda").code(Code.fromAsset("../lambdas/build/libs/lambdas-all.jar"))
-            .handler("com.example.lambda.Handler").runtime(Runtime.JAVA_21).tracing(Tracing.ACTIVE)
+            .handler("com.example.lambda.Handler").runtime(Runtime.JAVA_17).tracing(Tracing.ACTIVE)
             .build()
         val myFunctionIntegration = HttpLambdaIntegration("first-lambda-integration", lambda)
 
         val lambda2 = Function.Builder.create(this, "second-lambda").functionName("second-lambda").code(Code.fromAsset("../lambdas/build/libs/lambdas-all.jar"))
-            .handler("com.example.lambda.Handler").runtime(Runtime.JAVA_21).tracing(Tracing.ACTIVE).snapStart(SnapStartConf.ON_PUBLISHED_VERSIONS)
+            .handler("com.example.lambda.Handler").runtime(Runtime.JAVA_17).tracing(Tracing.ACTIVE)
             .build()
 
         //Define a lambda version
         val lambda2Version = Version.Builder.create(this, "second-lambda-version").lambda(lambda2).build()
         val functionAlias = Alias.Builder.create(this, "second-lambda-alias").version(lambda2Version).aliasName("snapsnart").build()
         val myFunctionIntegration2 = HttpLambdaIntegration("second-lambda-integration", functionAlias)
-
+        SnapStartProperty.builder().applyOn("PublishedVersions").build()
         //Define API
         val httpApi = HttpApi(this, "my-simple-api")
 

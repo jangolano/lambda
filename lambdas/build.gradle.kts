@@ -6,7 +6,11 @@ plugins {
     id("buildlogic.kotlin-library-conventions")
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
-
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 repositories {
     mavenCentral()
 }

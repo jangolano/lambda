@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation("software.amazon.awscdk:aws-cdk-lib:2.145.0")
+    implementation("software.amazon.awscdk:aws-cdk-lib:2.184.1")
 }
 application{
     mainClass = "AppKt"
